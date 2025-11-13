@@ -8,6 +8,7 @@
  */
 function initializeDashboard() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
+
   var sheetNames = ['Daily Log', 'Provider List', 'Weekly Summary', 'Monthly Summary', 'Dashboard'];
 
   sheetNames.forEach(function(name) {
