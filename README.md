@@ -1,83 +1,62 @@
 # Google Sheets KPI Dashboard for Medical Providers
 
-This project is a Google Sheets-based dashboard designed to help healthcare practices track key performance indicators (KPIs) for medical providers. The goal is to monitor the daily performance of providers, including patient bookings, cancellations, and the number of patients actually seen. The dashboard includes daily, weekly, and monthly summaries, and flags any negative performance outcomes.
+This repository contains a Google Apps Script that scaffolds a Google Sheets dashboard for monitoring daily, weekly, and monthly productivity metrics for up to eight medical providers. The layout is designed for manual data entry while surfacing the KPIs most practices rely on when they do not yet have an EMR integration.
 
-## Features
+## What the Dashboard Tracks
 
-- **Daily Tracker for Each Provider**:
-  - Tracks the number of **new bookings** received each day.
-  - Tracks **same-day cancellations** (cancellations made on the same day as the booking).
-  - Tracks **cancellations made more than 24 hours in advance**.
-  - Tracks the **number of patients actually seen** by each provider.
+Each provider receives a daily row that captures:
 
-- **Calculations & Averages**:
-  - Automatically calculates daily totals and averages for each provider.
-  - Shows weekly and monthly summaries for easy analysis.
-  - Calculates the **percentage of booked patients vs. seen patients**.
-  
-- **Visual Flags**:
-  - Flags negative values (e.g., when the total number of patients seen is less than the booked appointments) by turning the corresponding cell **red**.
-  
-- **Monthly & Weekly Summaries**:
-  - Displays **weekly** and **monthly performance metrics** for each provider.
-  - Helps identify trends in bookings and cancellations over time.
-  
-- **Manual Data Entry**:
-  - Since the practice’s EMR system doesn’t integrate, the dashboard allows easy **manual data entry** by office staff.
-  - The system is designed to be user-friendly, requiring no technical knowledge to input data.
+- **New bookings** received that day
+- **Same-day cancellations** (cancellations that happen on the appointment date)
+- **Cancellations made more than 24 hours in advance**
+- **Patients actually seen**
 
-## Setup Instructions
+From those inputs, the sheet automatically calculates:
 
-1. **Create a New Google Sheets File**:
-   - Open Google Sheets and create a new sheet titled "Provider Performance Dashboard."
+- **Net patients** (bookings minus cancellations)
+- **Booked vs. seen percentage**
+- **Week start** and **Month** helper columns that power the summaries
+- Conditional formatting that turns the net patients column **red** whenever the value is negative
 
-2. **Add the Script**:
-   - Open the script editor in Google Sheets by selecting `Extensions > Apps Script`.
-   - Copy and paste the `app script code` provided into the script editor.
+Weekly and monthly summary tabs roll the data up so you can compare provider performance over time. A lightweight dashboard tab surfaces today’s totals and the current week’s fill rate at a glance.
 
-3. **Script Configuration**:
-   - The script will auto-generate the daily tracker, weekly, and monthly summaries.
-   - Ensure that the sheet contains columns for:
-     - **Provider Name**
-     - **New Bookings**
-     - **Same-Day Cancellations**
-     - **Cancellations > 24 Hours**
-     - **Patients Seen**
-   - The script will automatically calculate the daily totals and averages.
+## Getting Started
 
-4. **Customize the Dashboard**:
-   - Adjust the range for daily, weekly, and monthly views based on your needs.
-   - Set up conditional formatting (e.g., turning cells red when values are negative).
-   - Customize the layout to suit your practice's needs (adding additional columns for provider names, etc.).
+1. **Create the Google Sheet**
+   - Open Google Sheets and create a blank spreadsheet named something like `Provider Performance Dashboard`.
 
-## Example Spreadsheet Layout
+2. **Add the Script**
+   - Select **Extensions → Apps Script**.
+   - Delete any starter code and paste the contents of [`apps_script/dashboard_setup.gs`](apps_script/dashboard_setup.gs) into the editor.
+   - Save the project, then click the run ▶️ button for `initializeDashboard`. Google will prompt you to authorize the script the first time.
 
-| **Date**       | **Provider Name** | **New Bookings** | **Same-Day Cancellations** | **Cancellations > 24 hrs** | **Patients Seen** | **Daily Total** | **Average** |
-|----------------|-------------------|------------------|----------------------------|---------------------------|-------------------|------------------|-------------|
-| 2025-11-10     | Dr. John Doe      | 5                | 1                          | 0                         | 4                 | 5                | 80%         |
-| 2025-11-10     | Dr. Jane Smith    | 4                | 0                          | 1                         | 3                 | 4                | 75%         |
-| ...            | ...               | ...              | ...                        | ...                       | ...               | ...              | ...         |
+3. **Populate the Provider List**
+   - Return to the spreadsheet and open the **Provider List** tab.
+   - Replace the placeholder provider names with your eight providers. The Daily Log sheet uses this list for a drop-down menu, so keep the list contiguous (no blank rows in the middle).
 
-## How to Use
+4. **Daily Data Entry**
+   - Use the **Daily Log** tab to enter each provider’s performance every day.
+   - Columns G–J are calculated automatically. Do not overwrite them.
+   - Net values that fall below zero will highlight red so you can immediately spot issues.
 
-- **Data Entry**: Office staff should enter the data manually each day. They will need to record:
-  - The number of **new bookings** made.
-  - Any **same-day cancellations**.
-  - Cancellations made more than 24 hours in advance.
-  - The number of **patients actually seen**.
-  
-- **Daily Review**: The dashboard will display each provider's performance on a daily basis. At the end of each day, the total values and averages will be calculated automatically.
+5. **Review Weekly and Monthly Summaries**
+   - The **Weekly Summary** tab groups each provider’s totals by the Monday start of the week.
+   - The **Monthly Summary** tab groups metrics by calendar month (`YYYY-MM`).
+   - Both tabs include net patients and booked-vs-seen percentages so you can compare productivity across time horizons.
 
-- **Weekly & Monthly Summaries**: The dashboard will update weekly and monthly views, giving a clear overview of the practice's overall performance.
+6. **Use the Dashboard Snapshot**
+   - The **Dashboard** tab aggregates today’s bookings and patients seen.
+   - The right-hand card displays the current week fill rate (patients seen ÷ bookings) so you can gauge how full the schedule remains.
 
-## Future Enhancements
+## Customising the Template
 
-- **Automated Data Imports**: In future versions, we plan to explore integrations with EMR systems for automated data import (if feasible).
-- **Custom Reports**: Ability to export the data to custom reports for stakeholders or regulatory purposes.
+- **More than eight providers?** Add additional names under the provider list and extend the data validation range on the Daily Log’s Provider column.
+- **Need other KPIs?** You can add more columns to the Daily Log sheet—just update the weekly/monthly formulas to include them.
+- **Prefer charts?** Use Google Sheets’ built-in charts on the Weekly or Monthly Summary tabs without affecting the underlying formulas.
 
-## Contributing
+## File Overview
 
-Contributions are welcome! Feel free to fork the repository, make changes, and submit pull requests. If you have any suggestions for improvements or encounter any issues, please open an issue in the GitHub repository.
+- [`apps_script/dashboard_setup.gs`](apps_script/dashboard_setup.gs) – Google Apps Script that builds and formats the entire workbook structure, including formulas, conditional formatting, and summary views.
 
 ## License
 
